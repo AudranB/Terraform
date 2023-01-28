@@ -2,9 +2,7 @@ variable "key_name" {}
 variable "public_key" {}
 variable "ami" {}
 variable "instance_type" {}
-variable "cidr_block_vpc" {
-    type=list
-}
+variable "cidr_block_vpc" {}
 variable "cidr_block_subnet" {
     type=list
 }

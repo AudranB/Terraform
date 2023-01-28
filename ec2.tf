@@ -1,110 +1,47 @@
-//*****************************************************************************//
-// PARTIE PROD
-//*****************************************************************************//
-
-resource "aws_vpc" "my_vpc" {
-  cidr_block = var.cidr_block_vpc[0]
-  tags = {
-    Name = "PROD VPC"
-  }
-  enable_dns_hostnames = true
+//CREATION VPC//
+module "my_vpc" {
+  source = "./modules/VPC"
+  cidr_block_vpc = var.cidr_block_vpc
+  cidr_block_subnet = var.cidr_block_subnet[0]
 }
-
-//*****************************************************************************//
-// PARTIE FRONT - PROD
-//*****************************************************************************//
-
-resource "aws_security_group" "sg_front" {
-  name = "PROD front sg"
-  description = "Allow HTTP and SSH traffic via Terraform"
-  vpc_id = aws_vpc.my_vpc.id
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "icmp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_subnet" "subnet_front" {
-  vpc_id            = aws_vpc.my_vpc.id
-  cidr_block        = var.cidr_block_subnet[0]
-  availability_zone = "eu-west-3c"
-  tags = {
-    Name = "Subnet_front"
-  }
-  depends_on = [aws_internet_gateway.gw_front]
-}
-/*
-resource "aws_network_interface" "NI_front" {
-  subnet_id   = aws_subnet.subnet_front.id
-  tags = {
-    Name = "primary_network_interface"
-  }
-}
-*/
+//CREATION PAIR KEY//
 resource "aws_key_pair" "deployer" {
   key_name   = var.key_name
   public_key= var.public_key 
 }
 
+/*
+// A VOIR //
 resource "aws_internet_gateway" "gw_front" {
-  vpc_id = aws_vpc.my_vpc.id
+  vpc_id = module.my_vpc.MyVPC_id
 }
 
 resource "aws_eip" "bar" {
   vpc = true
   count=2
-  instance                  = aws_instance.my_ec2_instance_front[count.index].id 
+  instance                  = module.my_ec2_instance.My_instance[count.index].id 
   depends_on                = [aws_internet_gateway.gw_front]
 }
+// A VOIR // */
 
-resource "aws_instance" "my_ec2_instance_front" {
-    count = 2
-    ami = var.ami
-    instance_type = var.instance_type
-    key_name = aws_key_pair.deployer.key_name
-    subnet_id = aws_subnet.subnet_front.id
-    /*
-    network_interface {
-    network_interface_id = aws_network_interface.NI_front.id
-    device_index         = 0
-    }
-    */
-    //user_data = "${file("FILE/installapache.sh")}"
-    vpc_security_group_ids = [aws_security_group.sg_front.id]
+
+
+module "my_ec2_instance" {
+  count = 3
+  source = "./modules/Instance"
+  ami = var.ami
+  instance_type = var.instance_type
+  key_name = var.key_name
+  subnet_id = module.my_vpc.MySubnet_id
+  VPC_secu_group_id = module.my_vpc.My_vpc_SG
 }
 
 
-//*****************************************************************************//
-// PARTIE MID - PROD
-//*****************************************************************************//
 
 resource "aws_security_group" "sg_mid" {
   name = "PROD mid sg"
   description = "Allow HTTP and SSH traffic via Terraform"
-  vpc_id = aws_vpc.my_vpc.id
+  vpc_id = module.my_vpc.MyVPC_id
 
   ingress {
     from_port   = 22
@@ -128,7 +65,7 @@ resource "aws_security_group" "sg_mid" {
 }
 
 resource "aws_subnet" "subnet_mid" {
-  vpc_id            = aws_vpc.my_vpc.id
+  vpc_id            = module.my_vpc.MyVPC_id
   cidr_block        = var.cidr_block_subnet[1]
   availability_zone = "eu-west-3c"
   tags = {
