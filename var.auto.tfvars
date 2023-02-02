@@ -1,4 +1,4 @@
-key_name = "deployer-key"
+key_name = "AWS_KEY"
 public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOiovmInBH8iPYe4j8UYAx6/YUiJZwjS/vmkq/EOSUuR voulu@LAPTOP-2ICLEK5A"
 ami = "ami-03b755af568109dc3"
 instance_type = "t2.micro"

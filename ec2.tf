@@ -1,15 +1,15 @@
-//CREATION VPC//
+// CREATION VPC - VPC des mes 3 environnemnts PROD | PRE-PROD | DEV //
 module "my_vpc" {
   source = "./modules/VPC"
   cidr_block_vpc = var.cidr_block_vpc
   cidr_block_subnet = var.cidr_block_subnet[0]
 }
 //CREATION PAIR KEY//
-resource "aws_key_pair" "deployer" {
+/*resource "aws_key_pair" "deployer" {
   key_name   = var.key_name
   public_key= var.public_key 
 }
-
+*/
 /*
 // A VOIR //
 resource "aws_internet_gateway" "gw_front" {
@@ -18,14 +18,17 @@ resource "aws_internet_gateway" "gw_front" {
 
 resource "aws_eip" "bar" {
   vpc = true
-  count=2
-  instance                  = module.my_ec2_instance.My_instance[count.index].id 
+  count = 3
+  instance                  = module.my_ec2_instance[count.index].My_instance
   depends_on                = [aws_internet_gateway.gw_front]
 }
-// A VOIR // */
+*/
 
-
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+                                          FRONT PROD
+*/
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 module "my_ec2_instance" {
   count = 3
   source = "./modules/Instance"
@@ -35,6 +38,8 @@ module "my_ec2_instance" {
   subnet_id = module.my_vpc.MySubnet_id
   VPC_secu_group_id = module.my_vpc.My_vpc_SG
 }
+
+
 
 
 
@@ -87,7 +92,7 @@ resource "aws_eip" "bar" {
   depends_on                = [aws_internet_gateway.gw]
 }
 */
-resource "aws_instance" "my_ec2_instance_mid" {
+/*resource "aws_instance" "my_ec2_instance_mid" {
     count = 2
     ami = var.ami
     instance_type = var.instance_type
@@ -98,7 +103,7 @@ resource "aws_instance" "my_ec2_instance_mid" {
     network_interface_id = aws_network_interface.NI_mid.id
     device_index         = 0
     }
-    */
+    
     //user_data = "${file("FILE/installapache.sh")}"
     vpc_security_group_ids = [aws_security_group.sg_mid.id]
-}
+}*/
