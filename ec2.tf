@@ -5,24 +5,11 @@ module "my_vpc" {
   cidr_block_subnet = var.cidr_block_subnet[0]
 }
 //CREATION PAIR KEY//
-/*resource "aws_key_pair" "deployer" {
+resource "aws_key_pair" "aws-terraform-key" {
   key_name   = var.key_name
-  public_key= var.public_key 
-}
-*/
-/*
-// A VOIR //
-resource "aws_internet_gateway" "gw_front" {
-  vpc_id = module.my_vpc.MyVPC_id
+  public_key = "${file("key/id_rsa.pub")}"
 }
 
-resource "aws_eip" "bar" {
-  vpc = true
-  count = 3
-  instance                  = module.my_ec2_instance[count.index].My_instance
-  depends_on                = [aws_internet_gateway.gw_front]
-}
-*/
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
@@ -43,47 +30,52 @@ module "my_ec2_instance" {
 
 
 
-resource "aws_security_group" "sg_mid" {
-  name = "PROD mid sg"
-  description = "Allow HTTP and SSH traffic via Terraform"
-  vpc_id = module.my_vpc.MyVPC_id
+# resource "aws_security_group" "sg_mid" {
+#   name = "PROD mid sg"
+#   description = "Allow HTTP and SSH traffic via Terraform"
+#   vpc_id = module.my_vpc.MyVPC_id
 
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+#   ingress {
+#     from_port   = 22
+#     to_port     = 22
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+#   ingress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "ICMP"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+#     ingress {
+#     from_port   = 80
+#     to_port     = 80
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+# }
 
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "ICMP"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
+# resource "aws_subnet" "subnet_mid" {
+#   vpc_id            = module.my_vpc.MyVPC_id
+#   cidr_block        = var.cidr_block_subnet[1]
+#   availability_zone = "eu-west-3c"
+#   tags = {
+#     Name = "Subnet_mid"
+#   }
+# }
 
-resource "aws_subnet" "subnet_mid" {
-  vpc_id            = module.my_vpc.MyVPC_id
-  cidr_block        = var.cidr_block_subnet[1]
-  availability_zone = "eu-west-3c"
-  tags = {
-    Name = "Subnet_mid"
-  }
-}
-
-resource "aws_network_interface" "NI_mid" {
-  subnet_id   = aws_subnet.subnet_mid.id
-  tags = {
-    Name = "mid_network_interface"
-  }
-}
+# resource "aws_network_interface" "NI_mid" {
+#   subnet_id   = aws_subnet.subnet_mid.id
+#   tags = {
+#     Name = "mid_network_interface"
+#   }
+# }
 
 /*
 resource "aws_eip" "bar" {
