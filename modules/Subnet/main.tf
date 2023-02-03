@@ -1,8 +1,8 @@
-resource "aws_subnet" "subnet_front" {
-  vpc_id            = module.my_vpc.id
-  cidr_block        = var.cidr_block_subnet
-  tags = {
-    Name = "Subnet_front"
-  }
+resource "aws_subnet" "my_subnet" {
+  vpc_id            = var.vpc_id
+  cidr_block  = var.cidr_block
+  # tags = {
+  #   Name = "Subnet_"
+  # }
   map_public_ip_on_launch = true
 }

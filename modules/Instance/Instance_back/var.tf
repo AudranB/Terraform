@@ -3,5 +3,3 @@ variable "instance_type" {}
 variable "subnet_id" {} 
 variable "VPC_secu_group_id" {}
 variable "key_name" {}
-variable "html_path_source" {}
-variable "html_path_dest" {}

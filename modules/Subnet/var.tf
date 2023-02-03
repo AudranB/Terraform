@@ -1,1 +1,2 @@
-variable "cidr_block_subnet" {}
+variable "cidr_block" {}
+variable "vpc_id" {}
