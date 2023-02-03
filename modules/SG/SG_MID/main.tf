@@ -1,5 +1,5 @@
 resource "aws_security_group" "sg_mid" {
-  name = "mid sg"
+
   description = "Allow port 8080 & SSH & ICMP traffic "
   vpc_id = var.vpc_id
   ingress {
@@ -18,7 +18,7 @@ resource "aws_security_group" "sg_mid" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["10.10.10.0/0"] // variabilisé afin que les front atteignes les mid
+    cidr_blocks = [var.cidr_blocks] // variabilisé afin que les front atteignes les mid
   }
   ingress {
     from_port   = -1

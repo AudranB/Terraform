@@ -1,5 +1,4 @@
 resource "aws_security_group" "sg_front" {
-  name = "front sg"
   description = "Allow HTTP & SSH & ICMP traffic"
   vpc_id = var.vpc_id
   ingress {
